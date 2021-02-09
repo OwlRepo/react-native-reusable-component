@@ -22,7 +22,7 @@ export default function ReusableTextInput(props: {
     styles.containerStyle,
     props.customComponentProps.containerStyle,
   ];
-  var mergedtextInputStyle = [
+  var mergedTextInputStyle = [
     styles.textInputStyle,
     props.customComponentProps.textInputStyle,
   ];
@@ -31,7 +31,7 @@ export default function ReusableTextInput(props: {
     <View style={mergedContainerStyle}>
       <TextInput
         ref={props.customComponentProps.ref}
-        style={mergedtextInputStyle}
+        style={mergedTextInputStyle}
         {...props.coreComponentTextInputProps}
       />
     </View>
@@ -43,8 +43,9 @@ const styles = StyleSheet.create({
     minWidth: 100.0,
     maxWidth: "100%",
     backgroundColor: "#E5E5E5",
-    marginBottom: 10.0,
     borderRadius: 5.0,
+    alignItems: "stretch",
+    justifyContent: "center",
   },
   textInputStyle: {
     color: "#343434",

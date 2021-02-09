@@ -1,15 +1,15 @@
-import React, { useRef, useState } from "react";
 import {
-  Alert,
   Keyboard,
+  Platform,
   StyleSheet,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import React, { useRef, useState } from "react";
 
 import Colors from "./src/Constants/ColorPalette";
-import Spacers from "./src/Constants/Spacers";
 import ReusableBodyText from "./src/ReusableComponents/ReusableBodyText";
 import ReusableCardContainer from "./src/ReusableComponents/ReusableCardContainer";
 import ReusableContainer from "./src/ReusableComponents/ReusableContainer";
@@ -18,6 +18,7 @@ import ReusableFloatingButton from "./src/ReusableComponents/ReusableFloatingBut
 import ReusableSubtitleText from "./src/ReusableComponents/ReusableSubtitleText";
 import ReusableTextInput from "./src/ReusableComponents/ReusableTextInput";
 import ReusableTitleText from "./src/ReusableComponents/ReusableTitleText";
+import Spacers from "./src/Constants/Spacers";
 
 // GUIDES ON HOW TO USE THIS LIBRARY
 //1. customComponentProps is where you can modify the styles of the Reusable Component
@@ -35,14 +36,7 @@ export default function App() {
 
   function displayUI(): React.ReactNode {
     return (
-      <View
-        style={{
-          width: "100%",
-          flexDirection: "column",
-          alignItems: "stretch",
-          justifyContent: "center",
-        }}
-      >
+      <ReusableCardContainer cardContainerStyle={styles.cardContainerStyle}>
         <ReusableTitleText text={"Sample Title Text"} />
         <ReusableSubtitleText text={"Sample subtitle text"} />
         <ReusableBodyText
@@ -54,7 +48,10 @@ export default function App() {
 
         <ReusableTextInput
           customComponentProps={{
-            textInputStyle: { margin: 15.0 },
+            textInputStyle:
+              Platform.OS == "web"
+                ? { margin: 15.0, outlineWidth: 0.0 }
+                : { margin: 15.0 },
           }}
           coreComponentTextInputProps={{
             placeholder: "Username",
@@ -72,7 +69,10 @@ export default function App() {
         <ReusableTextInput
           customComponentProps={{
             ref: passwordTextInputRef,
-            textInputStyle: { margin: 15.0 },
+            textInputStyle:
+              Platform.OS == "web"
+                ? { margin: 15.0, outlineWidth: 0.0 }
+                : { margin: 15.0 },
           }}
           coreComponentTextInputProps={{
             placeholder: "Password",
@@ -85,86 +85,57 @@ export default function App() {
         />
 
         <ReusableFloatingButton
-          customComponentProps={{
-            text: "SUBMIT",
-            textStyle: { fontSize: 13 },
-            containerStyle: {
-              width: "100%",
-              marginBottom: Spacers.defaultMargin,
+          containerStyle={{
+            width: "100%",
+            marginBottom: Spacers.defaultMargin,
+          }}
+          buttonProps={{
+            onPress: () => {
+              console.log("SUBMIT BUTTON");
             },
           }}
-          coreComponentTouchableOpacityProps={{
-            onPress: dummyFunction,
-          }}
-        />
+        >
+          <Text style={{ color: "white", fontWeight: "bold", margin: 5.0 }}>
+            SUBMIT
+          </Text>
+        </ReusableFloatingButton>
 
         <ReusableFlatButton
-          customComponentProps={{
-            text: "CLEAR",
-            textStyle: { fontSize: 13 },
-            containerStyle: {
-              width: "100%",
-              marginBottom: Spacers.defaultMargin,
-              backgroundColor: Colors.defaultColorRed,
-            },
+          containerStyle={{
+            width: "100%",
+            marginBottom: Spacers.defaultMargin,
+            backgroundColor: Colors.defaultColorRed,
           }}
-          coreComponentTouchableOpacityProps={{
-            activeOpacity: 0.5,
+          buttonProps={{
             onPress: () => {
-              if (username.length != 0 || password.length != 0) {
-                setUsername("");
-                setPassword("");
-                Alert.alert("Are you sure");
-                console.log("Cancelled and cleared.");
-              }
+              setUsername("");
+              setPassword("");
             },
           }}
-        />
-
-        <ReusableFlatButton
-          customComponentProps={{
-            text: "CANCEL",
-            textStyle: { fontSize: 13 },
-            containerStyle: {
-              width: "100%",
-              marginBottom: Spacers.defaultMargin,
-              backgroundColor: Colors.defaultColorGrey,
-            },
-          }}
-          coreComponentTouchableOpacityProps={{
-            activeOpacity: 0.5,
-            onPress: () => {
-              if (username.length != 0 || password.length != 0) {
-                setUsername("");
-                setPassword("");
-                console.log("Cancelled and cleared.");
-              }
-            },
-          }}
-        />
-      </View>
+        >
+          <Text style={{ color: "white", fontWeight: "bold", margin: 5.0 }}>
+            CLEAR
+          </Text>
+        </ReusableFlatButton>
+      </ReusableCardContainer>
     );
   }
 
-  return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ReusableContainer
-        customComponentProps={{
-          cardContainerStyle: styles.container,
-          childComponents: (
-            <ReusableCardContainer
-              customComponentProps={{
-                cardContainerStyle: styles.cardContainerStyle,
-                childComponents: displayUI(),
-              }}
-              coreComponentViewProps={{}}
-            />
-          ),
-        }}
-        coreComponentViewProps={{}}
-      />
-    </TouchableWithoutFeedback>
-  );
+  if (Platform.OS != "web") {
+    return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ReusableContainer containerStyle={styles.container}>
+          {displayUI()}
+        </ReusableContainer>
+      </TouchableWithoutFeedback>
+    );
+  } else {
+    return (
+      <ReusableContainer containerStyle={styles.container}>
+        {displayUI()}
+      </ReusableContainer>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -176,8 +147,9 @@ const styles = StyleSheet.create({
     paddingVertical: "10%",
   },
   cardContainerStyle: {
+    flexDirection: "column",
     width: "100%",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
     borderRadius: 10.0,
   },

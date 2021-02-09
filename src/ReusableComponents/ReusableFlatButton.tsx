@@ -2,45 +2,30 @@ import React, { ReactNode } from "react";
 import {
   StyleProp,
   StyleSheet,
-  Text,
-  TextStyle,
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
 
 interface props {
-  text: string;
-  textStyle?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-  extraChildComponents?: ReactNode;
+  buttonProps?: React.ComponentProps<typeof TouchableOpacity>;
 }
 
-export default function ReusableFlatButton(props: {
-  customComponentProps: props;
-  coreComponentTouchableOpacityProps: React.ComponentProps<
-    typeof TouchableOpacity
-  >;
-}) {
-  var mergedContainerStyle = [
+const ReusableFlatButton: React.FC<props> = (props) => {
+  const { children, ...restProps } = props;
+  const mergedContainerStyle = [
     styles.containerStyle,
-    props.customComponentProps.containerStyle,
-  ];
-  var mergedTextStyle = [
-    styles.textStyle,
-    props.customComponentProps.textStyle,
+    restProps.containerStyle,
   ];
 
   return (
-    <TouchableOpacity
-      style={mergedContainerStyle}
-      activeOpacity={0.26}
-      {...props.coreComponentTouchableOpacityProps}
-    >
-      <Text style={mergedTextStyle}>{props.customComponentProps.text}</Text>
-      {props.customComponentProps.extraChildComponents}
+    <TouchableOpacity style={mergedContainerStyle} {...restProps.buttonProps}>
+      {children}
     </TouchableOpacity>
   );
-}
+};
+
+export default ReusableFlatButton;
 
 const styles = StyleSheet.create({
   textStyle: {
@@ -50,7 +35,8 @@ const styles = StyleSheet.create({
     margin: 5.0,
   },
   containerStyle: {
-    minWidth: 100.0,
+    flexDirection: "row",
+    minWidth: 70.0,
     maxWidth: "100%",
     alignItems: "center",
     justifyContent: "center",

@@ -3,27 +3,27 @@ import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface props {
   cardContainerStyle?: StyleProp<ViewStyle>;
-  childComponents: ReactNode;
+  cardContainerProps?: React.ComponentProps<typeof View>;
 }
 
-export default function ReusableCardContainer(props: {
-  customComponentProps: props;
-  coreComponentViewProps: React.ComponentProps<typeof View>;
-}) {
-  var mergedCardContainerStyle = [
+const ReusableCardContainer: React.FC<props> = (props) => {
+  const { children, ...restProps } = props;
+  const mergedCardContainerStyle = [
     styles.cardContainerStyle,
-    props.customComponentProps.cardContainerStyle,
+    props.cardContainerStyle,
   ];
+
   return (
-    <View {...props.coreComponentViewProps} style={mergedCardContainerStyle}>
-      {props.customComponentProps.childComponents}
+    <View style={mergedCardContainerStyle} {...props.cardContainerProps}>
+      {children}
     </View>
   );
-}
+};
+
+export default ReusableCardContainer;
 
 const styles = StyleSheet.create({
   cardContainerStyle: {
-    minHeight: "10%",
     minWidth: 100.0,
     maxWidth: "100%",
     shadowColor: "black",
@@ -32,6 +32,5 @@ const styles = StyleSheet.create({
     shadowRadius: 2.5,
     elevation: 5.0,
     backgroundColor: "white",
-    padding: 10.0,
   },
 });

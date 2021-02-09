@@ -1,40 +1,32 @@
 import React, { ReactNode } from "react";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 
 interface props {
-  text: string;
-  textStyle?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-  extraChildComponents?: ReactNode;
+  buttonProps?: React.ComponentProps<typeof TouchableOpacity>;
 }
 
-export default function ReusableFloatingButton(props: {
-  customComponentProps: props;
-  coreComponentTouchableOpacityProps: React.ComponentProps<
-    typeof TouchableOpacity
-  >;
-}) {
-  var mergedContainerStyle = [
+const ReusableFloatingButton: React.FC<props> = (props) => {
+  const { children, ...restProps } = props;
+
+  const mergedContainerStyle = [
     styles.containerStyle,
-    props.customComponentProps.containerStyle,
-  ];
-  var mergedTextStyle = [
-    styles.textStyle,
-    props.customComponentProps.textStyle,
+    restProps.containerStyle,
   ];
 
   return (
-    <TouchableOpacity
-      style={mergedContainerStyle}
-      activeOpacity={0.26}
-      {...props.coreComponentTouchableOpacityProps}
-    >
-      <Text style={mergedTextStyle}>{props.customComponentProps.text}</Text>
-      {props.customComponentProps.extraChildComponents}
+    <TouchableOpacity style={mergedContainerStyle} {...restProps.buttonProps}>
+      {children}
     </TouchableOpacity>
   );
-}
+};
+
+export default ReusableFloatingButton;
 
 const styles = StyleSheet.create({
   textStyle: {
